@@ -1,54 +1,68 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import '../styles/Calculator.css'
 
 const Calculator = () => {
-    const [count, setCount] = useState(0);
-    const [concentration, setConcentration] = useState(0);
-    const [dosage, setDosage] = useState(0);
-    const [result, setResult] = useState(0);
+  const [concentration, setConcentration] = useState('');
+  const [desiredDosage, setDesiredDosage] = useState('');
+  const [servings, setServings] = useState('');
+  const [result, setResult] = useState(null);
 
-    const calculateDosage = () => {
-        const totalMG = count * concentration;
-        const doses = totalMG / dosage;
-        setResult(doses);
-    };
+  const calculateVolume = () => {
+    if (concentration && desiredDosage && servings) {
+      // Convert concentration percentage to mg per unit 
+      const concentrationMgPerUnit = (concentration / 100) * 1000; 
+      const totalDosageNeeded = desiredDosage * servings; 
+      const volumeInUnits = totalDosageNeeded / concentrationMgPerUnit; 
+      setResult(volumeInUnits);
+    }
+  };
 
-  return (
-    <div>
-        <h2>Edible Dosage Calculator</h2>
-        <label htmlFor='countInput'>Count</label>
-        <input 
-            id='countInput'
-            type='number'
-            placeholder='# of edibles'
-            value={count}
-            onChange={(e) => setCount(e.target.value)}
+    return (
+        <div className="calculator-container">
+            <h2>Edible Dosage Calculator</h2>
             
-        />
-        <label htmlFor='concentrationInput'>Concentration</label>
-        <input 
-            type='number'
-            placeholder='THC concentration (mg/edible)'
-            value={concentration}
-            onChange={(e) => setConcentration(e.target.value)}
-        />
-        <label htmlFor='dosageInput'>Dosage</label>
-        <input
-            id='dosageInput' 
-            type='number'
-            placeholder='Desired dosage per serving (mg)'
-            value={dosage}
-            onChange={(e) => setDosage(e.target.value)}
-        />
-        <button onClick={calculateDosage}>Calculate</button>
-
-        {result && (
-            <div>
-                <p>Total Doses: {result}</p>
+            <div className="input-group">
+                <label htmlFor="concentrationInput">Concentration</label>
+                <input 
+                    id="concentrationInput"
+                    type="number"
+                    placeholder="THC concentration (mg/edible)"
+                    value={concentration}
+                    onChange={(e) => setConcentration(e.target.value)}
+                />
             </div>
-        )}
+            
+            <div className="input-group">
+                <label htmlFor="dosageInput">Desired Dosage</label>
+                <input
+                    id="dosageInput" 
+                    type="number"
+                    placeholder="Desired dosage per serving (mg)"
+                    value={desiredDosage}
+                    onChange={(e) => setDesiredDosage(e.target.value)}
+                />
+            </div>
+            <div className="input-group">
+                <label htmlFor="servingsInput">Servings</label>
+                <input 
+                    id="servingsInput"
+                    type="number"
+                    placeholder="Number of Servings"
+                    value={servings}
+                    onChange={(e) => setServings(e.target.value)}
+                />
+            </div>
+            
+            
+            <button onClick={calculateVolume}>Calculate</button>
 
-    </div>
-  )
-}
+            {result > 0 && (
+                <div className="result">
+                    <p>Total Volume Needed: {result.toFixed(2)}ml</p>
+                </div>
+            )}
+        </div>
+    );
+};
 
-export default Calculator
+export default Calculator;
